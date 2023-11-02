@@ -1,0 +1,28 @@
+---
+title: "Traffic Crash"
+author: "Mithirendra Maniam"
+date: "2023-11-02"
+output: html_document
+---
+## 1. DATA COLLECTION
+
+Testing
+
+--
+
+## 2. DATA CLEANING
+
+```{r}
+
+traffic_df <- read.csv("Crash_Analysis_System_(CAS)_data.csv")
+
+```
+
+Remove NAs from dataset.
+
+```{r}
+str(traffic_df)
+
+
+```
+
