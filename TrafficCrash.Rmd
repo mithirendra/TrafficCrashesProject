@@ -1,28 +1,99 @@
 ---
-title: "Traffic Crash"
+title: "Road accident analysis and hotspot prediction with Machine Learning"
+subtitle: WQD7004 Programming for Data Science Group Project
 author: "Mithirendra Maniam"
 date: "2023-11-02"
 output: html_document
 ---
-## 1. DATA COLLECTION
 
-Testing
+## 1. PROJECT INTRODUCTION
 
---
+```{r, echo=FALSE, out.width="50%"}
+# Define variable containing url
+url <- "https://res.cloudinary.com/dmeglmbmj/image/upload/v1699100625/Traffic_Crash_d1p0rh.jpg"
+```
 
-## 2. DATA CLEANING
+<center><img src="`r url`" width="500" /></center>
+
+Road accidents are a major concern all over the world, since they cause casualties, injuries, and fatalities each year. Accidents also cause significant economic losses. Many factors are responsible for causing road accidents. If these factors can be better understood and predicted, it might be possible to take measures to mitigate the damages and its severity [1].
+
+---
+
+## 2. PROJECT RESEARCH QUESTIONS
+The purpose of this project is to analyse and identify road accident factors, using traffic crash data from 2011 to 2023 from the New Zealand governments open data portal (data.gov.nz). Here are research questions that the project is aiming to answer:
+
+1. What are the major accident areas and vehicle types in New Zealand?
+2. Are they any factors that cause more severe accidents? 
+2. Can the data predict future road accidents hotspots based on past data?
+
+---
+
+## 3. PROJECT RESEARCH OBJECTIVES
+The research objectives for the project are:
+1. Identify major accident areas and vehicle types involved using descriptive data analysis.
+2. Identify variables that may cause severe accidents, including high fatalities using causal data analysis.
+3. Develop machine learning models to predict future road accident hotspots using predictive data analysis.
+
+---
+
+## 4. LITERATURE REVIEW
+
+
+---
+
+## 5. DATA COLLECTION
+
+The dataset comes from the Waka Kotahi Crash Analysis System (CAS), which records all traffic crashes reported to data.gov.nz by the NZ Police. CAS covers crashes on all New Zealand roadways or places where the public have legal access with a motor vehicle.
+
+The Dataset URL is as follows 
+1. [Dataset Website](https://catalogue.data.govt.nz/dataset/crash-analysis-system-cas-data5)
+2. [Actual Dataset URL](https://opendata-nzta.opendata.arcgis.com/datasets/NZTA::crash-analysis-system-cas-data-1.csv?where=1=1&outSR=%7B%22latestWkid%22%3A2193%2C%22wkid%22%3A2193%7D)
+
+The dataset was downloaded from data.gov.nz on 30 Oct 2023. As of 30 Oct 2023, data was available from economic year 1999/2000 to 2022/2023, and has 821,744 observations.
+
 
 ```{r}
-
+# Read csv file that was downloaded
 traffic_df <- read.csv("Crash_Analysis_System_(CAS)_data.csv")
 
 ```
 
-Remove NAs from dataset.
+Display the structure of dataset.
 
 ```{r}
+# Structure of dataset
 str(traffic_df)
 
-
 ```
+
+--
+
+## 6. DATA CLEANING
+
+
+---
+
+## 7. EXPLORATORY DATA ANALYSIS
+
+
+---
+
+## 7. DATA METHODOLOGY
+
+
+---
+
+## 8. INTERPRETATION
+
+
+---
+
+## 9. RECOMMENDATIONS AND FUTURE
+
+
+---
+
+## 10. REFERENCES
+1. Santos, D., Salas, J., Quaresma, P. Machine Learning Approaches to Traffic Analysis and Hotspot Prediction. *Computers* 2021, 10(12), 157; [https://doi.org/10.3390/computers10120157](https://doi.org/10.3390/computers10120157)
+
 
