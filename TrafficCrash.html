@@ -13,7 +13,7 @@
 
 <meta name="date" content="2023-11-02" />
 
-<title>Road accident analysis and hotspot prediction with Machine Learning</title>
+<title>Road accident environment factors cause analysis and accident hotspot prediction with Machine Learning</title>
 
 <script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
 // be compatible with the behavior of Pandoc < 2.8).
@@ -350,16 +350,17 @@ display: none;
 
 
 
-<h1 class="title toc-ignore">Road accident analysis and hotspot
-prediction with Machine Learning</h1>
-<h3 class="subtitle">WQD7004 Programming for Data Science Group
-Project</h3>
+<h1 class="title toc-ignore">Road accident environment factors cause
+analysis and accident hotspot prediction with Machine Learning</h1>
+<h3 class="subtitle">WQD7004 Programming for Data Science Group Project
+- Group 14</h3>
 <h4 class="author">Mithirendra Maniam</h4>
 <h4 class="date">2023-11-02</h4>
 
 </div>
 
 
+<hr />
 <div id="project-introduction" class="section level2">
 <h2>1. PROJECT INTRODUCTION</h2>
 <center>
@@ -367,22 +368,33 @@ Project</h3>
 </center>
 <p>Road accidents are a major concern all over the world, since they
 cause casualties, injuries, and fatalities each year. Accidents also
-cause significant economic losses. Many factors are responsible for
-causing road accidents. If these factors can be better understood and
-predicted, it might be possible to take measures to mitigate the damages
-and its severity [1].</p>
+cause significant economic losses. The 2018 report of the World Health
+Organization states that more than 1.35 million people die each year
+from causes related to road accidents. An additional 20-50 million are
+injured or disabled [1]. If factors that cause accidents can be better
+understood and predicted, it might be possible to take measures to
+mitigate the damages and its severity [2].</p>
 <hr />
 </div>
 <div id="project-research-questions" class="section level2">
 <h2>2. PROJECT RESEARCH QUESTIONS</h2>
-<p>The purpose of this project is to analyse and identify road accident
-factors, using traffic crash data from 2011 to 2023 from the New Zealand
-governments open data portal (data.gov.nz). Here are research questions
-that the project is aiming to answer:</p>
+<p>Many factors are responsible for causing road accidents. How to
+reduce the occurrence of fatal traffic accidents and improve road safety
+has been a significant problem for both governments and research
+institutions. Knowing what the influential factors are and how they
+affect the accidents can help better understand the cause-effect behind.
+This is beneficial to improve the estimation of the accident severity
+and preparation of countermeasures.[3]</p>
+<p>The purpose of this project is to predict road accident hotspots and
+analyse environmental factors causing accidents, using traffic crash
+data from 2011 to 2023 from the New Zealand governments open data portal
+(data.gov.nz). Here are research questions that the project is aiming to
+answer:</p>
 <ol style="list-style-type: decimal">
 <li>What are the major accident areas and vehicle types in New
 Zealand?</li>
-<li>Are they any factors that cause more severe accidents?</li>
+<li>Are they any environment factors that cause more severe
+accidents?</li>
 <li>Can the data predict future road accidents hotspots based on past
 data?</li>
 </ol>
@@ -390,16 +402,51 @@ data?</li>
 </div>
 <div id="project-research-objectives" class="section level2">
 <h2>3. PROJECT RESEARCH OBJECTIVES</h2>
-<p>The research objectives for the project are: 1. Identify major
-accident areas and vehicle types involved using descriptive data
-analysis. 2. Identify variables that may cause severe accidents,
-including high fatalities using causal data analysis. 3. Develop machine
-learning models to predict future road accident hotspots using
-predictive data analysis.</p>
+<p>The research objectives for the project are:</p>
+<ol style="list-style-type: decimal">
+<li>Identify major accident areas and vehicle types involved using
+descriptive data analysis.</li>
+<li>Identify environmental variables that may cause and increase the
+likelihood of severe accidents, including high fatalities using causal
+data analysis.</li>
+<li>Develop machine learning models to predict future road accident
+hotspots using predictive data analysis.</li>
+</ol>
 <hr />
 </div>
 <div id="literature-review" class="section level2">
 <h2>4. LITERATURE REVIEW</h2>
+<p>Given the significant impact to society and mortality rates, accident
+prediction has been extensively studied with many different models. From
+a methodology perspective, there are many that have been explored. In
+2019, Herbert et. al. [4] used a balanced random forest algorithm to
+study the accidents that occurred in Montreal. Overall, the algorithms
+predicted 85 percent of Montreal incidents, with a false positive rate
+(FPR) of 13%. Another study in 2019 on a GIS-based data mining
+methodology framework to analyze the influential factors of fatal
+traffic accidents showed that XGBoost obtained the highest modeling
+accuracy. [3] Fiorentini in 2020 gave outcomes from a random
+undersampling majority-class (RUMC) based models provide an enhancement
+in the reliability of the classifiers for detecting fatal crashes and
+those causing injury. Indeed, in imbalanced models, which showed that
+for the RUMC-based models, it spans from 52.5% (RUMC-based logistic
+regression) to 57.2% (RUMC-based k-nearest neighbor). Organizations and
+decision-makers could make use of RUMC and machine learning algorithms
+in predicting the severity of a crash occurrence, managing the present,
+and planning the future of their works [6].</p>
+<p>There are many factors that cause traffic accidents. Previous
+research showed the most often factor contributing to the accident
+occurrence are human factors, with driver inattention being the highest,
+which could be caused by several causes as e.g.distraction, overloading
+attention, monotonous driving, etc.[5]. However, very minimal research
+material have been found looking into environmental factors as causes
+for road accidents. One study by Jalilian et. al in 2019 [7] showed a
+significant relationship between fatal RTAs and factors such as; the
+sort of the road, the hindered visibility, the location of the accident,
+the accidents’ place, the climate, and lighting of the day (P&lt;0.05).
+When it was cloudy, the chance was 2.60 times more than when was clear
+(P&lt;0.05). But the sample size used was small, with only 2314
+accidents dataset examined.</p>
 <hr />
 </div>
 <div id="data-collection" class="section level2">
@@ -408,9 +455,14 @@ predictive data analysis.</p>
 which records all traffic crashes reported to data.gov.nz by the NZ
 Police. CAS covers crashes on all New Zealand roadways or places where
 the public have legal access with a motor vehicle.</p>
-<p>The Dataset URL is as follows 1. <a href="https://catalogue.data.govt.nz/dataset/crash-analysis-system-cas-data5">Dataset
-Website</a> 2. <a href="https://opendata-nzta.opendata.arcgis.com/datasets/NZTA::crash-analysis-system-cas-data-1.csv?where=1=1&amp;outSR=%7B%22latestWkid%22%3A2193%2C%22wkid%22%3A2193%7D">Actual
-Dataset URL</a></p>
+<p>The Dataset URL is as follows:</p>
+<ol style="list-style-type: decimal">
+<li><a href="https://catalogue.data.govt.nz/dataset/crash-analysis-system-cas-data5">Dataset
+Website</a><br />
+</li>
+<li><a href="https://opendata-nzta.opendata.arcgis.com/datasets/NZTA::crash-analysis-system-cas-data-1.csv?where=1=1&amp;outSR=%7B%22latestWkid%22%3A2193%2C%22wkid%22%3A2193%7D">Actual
+Dataset URL</a></li>
+</ol>
 <p>The dataset was downloaded from data.gov.nz on 30 Oct 2023. As of 30
 Oct 2023, data was available from economic year 1999/2000 to 2022/2023,
 and has 821,744 observations.</p>
@@ -492,7 +544,7 @@ str(traffic_df)</code></pre>
 ##  $ waterRiver               : int  NA NA NA 0 NA 0 0 NA NA 0 ...
 ##  $ weatherA                 : chr  &quot;Fine&quot; &quot;Fine&quot; &quot;Fine&quot; &quot;Fine&quot; ...
 ##  $ weatherB                 : chr  &quot;Null&quot; &quot;Null&quot; &quot;Null&quot; &quot;Null&quot; ...</code></pre>
-<p>–</p>
+<hr />
 </div>
 <div id="data-cleaning" class="section level2">
 <h2>6. DATA CLEANING</h2>
@@ -506,20 +558,46 @@ str(traffic_df)</code></pre>
 <h2>7. DATA METHODOLOGY</h2>
 <hr />
 </div>
-<div id="interpretation" class="section level2">
-<h2>8. INTERPRETATION</h2>
+<div id="data-interpretation" class="section level2">
+<h2>8. DATA INTERPRETATION</h2>
 <hr />
 </div>
 <div id="recommendations-and-future" class="section level2">
 <h2>9. RECOMMENDATIONS AND FUTURE</h2>
 <hr />
 </div>
+<div id="conclusion" class="section level2">
+<h2>10. CONCLUSION</h2>
+<hr />
+</div>
 <div id="references" class="section level2">
-<h2>10. REFERENCES</h2>
+<h2>11. REFERENCES</h2>
 <ol style="list-style-type: decimal">
+<li>WHO|10 Facts on Global Road Safety. Accessed: Oct. 10, 2018.
+[Online].Available: <a href="http://www.who.int/features/factfiles/roadsafety/en/" class="uri">http://www.who.int/features/factfiles/roadsafety/en/</a></li>
 <li>Santos, D., Salas, J., Quaresma, P. Machine Learning Approaches to
 Traffic Analysis and Hotspot Prediction. <em>Computers</em> 2021,
 10(12), 157; <a href="https://doi.org/10.3390/computers10120157">https://doi.org/10.3390/computers10120157</a></li>
+<li>Mai, J., Ding, Y., Cheng, J. C. P., Tan, Y., Gan, V. J. L.,Zhang,
+J.C. Analyzing the Leading Causes of Traffic Fatalities Using XGBoost
+and Grid-Based Analysis: A City Management Perspective. <em>IEEE
+Access</em> 2019, Vol 7. <a href="10.1109/ACCESS.2019.2946401">10.1109/ACCESS.2019.2946401</a></li>
+<li>Hébert, A.; Guédon, T.; Glatard, T.; Jaumard, B. High-Resolution
+Road Vehicle Collision Prediction for the City of Montreal.
+<em>Proceedings of the 2019 IEEE International Conference on Big Data
+(Big Data), Los Angeles</em>, CA, USA, 9–12 December 2019.</li>
+<li>Bucsuházya, K., Matuchováa, E., Zůvalaa, R., Moravcováa, P.,
+Kostíkováa, M., Mikuleca, R. Human factors contributing to the road
+traffic accident occurrence. AIIT 2nd International Congress on
+Transport Infrastructure and Systems in a changing world (TIS ROMA
+2019), 23rd-24th September 2019, Rome, Italy.</li>
+<li>Fiorentini, N., Losa, M. Handling Imbalanced Data in Road Crash
+Severity Prediction by Machine Learning Algorithms.
+<em>Infrastructures</em> 2020, 5(7), 61; <a href="https://doi.org/10.3390/infrastructures507006">https://doi.org/10.3390/infrastructures507006</a></li>
+<li>Jalilian, M.M, Safarpour, H., Bazyar, J., Keykaleh, M.S., Malekyan,
+L., Khorshidi, A. Environmental Related Risk Factors to Road Traffic
+Accidents in Ilam, Iran. <em>Med Arch.</em> 2019 Jun; 73(3):
+169–172.</li>
 </ol>
 </div>
 
