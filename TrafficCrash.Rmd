@@ -1,5 +1,5 @@
 ---
-title: "Road accident environment factors cause analysis and accident hotspot prediction with Machine Learning"
+title: "Road accident cause analysis and accident hotspot prediction with Machine Learning"
 subtitle: WQD7004 Programming for Data Science Group Project - Group 14
 author: "Mithirendra Maniam"
 date: "2023-11-02"
@@ -21,10 +21,9 @@ Road accidents are a major concern all over the world, since they cause casualti
 ---
 
 ## 2. PROJECT RESEARCH QUESTIONS
-Many factors are responsible for causing road accidents. How to reduce the occurrence of fatal traffic accidents and improve road safety has been a significant problem for both governments and research institutions. Knowing what the influential factors are and how they
-affect the accidents can help better understand the cause-effect behind. This is beneficial to improve the estimation of the accident severity and preparation of countermeasures.[3]
+Many factors are responsible for causing road accidents. How to reduce the occurrence of fatal traffic accidents and improve road safety has been a significant problem for both governments and research institutions. Knowing what the influential factors are and how they affect the accidents can help better understand the cause-effect behind. This is beneficial to improve the estimation of the accident severity and preparation of countermeasures.[3]
 
-The purpose of this project is to predict road accident hotspots and analyse environmental factors causing accidents, using traffic crash data from 2011 to 2023 from the New Zealand governments open data portal (data.gov.nz). Here are research questions that the project is aiming to answer:
+The purpose of this project is to predict road accident hotspots and analyse non-human factors causing accidents, using traffic crash data from 2011 to 2023 from the New Zealand governments open data portal (data.gov.nz). Here are research questions that the project is aiming to answer:
 
 1. What are the major accident areas and vehicle types in New Zealand?
 2. Are they any environment factors that cause more severe accidents? 
@@ -35,16 +34,16 @@ The purpose of this project is to predict road accident hotspots and analyse env
 ## 3. PROJECT RESEARCH OBJECTIVES
 The research objectives for the project are:
 
-1. Identify major accident areas and vehicle types involved using descriptive data analysis.
-2. Identify environmental variables that may cause and increase the likelihood of severe accidents, including high fatalities using causal data analysis.
-3. Develop machine learning models to predict future road accident hotspots using predictive data analysis.  
+1. Identify major accident areas and vehicle types involved.
+2. Identify non-human variables that may cause and increase the likelihood of severe accidents, including high fatalities.
+3. Develop machine learning models to predict future road accident hotspots.  
 
 ---
 
 ## 4. LITERATURE REVIEW
 Given the significant impact to society and mortality rates, accident prediction has been extensively studied with many different models. From a methodology perspective, there are many that have been explored. In 2019, Herbert et. al. [4] used a balanced random forest algorithm to study the accidents that occurred in Montreal. Overall, the algorithms predicted 85 percent of Montreal incidents, with a false positive rate (FPR) of 13%. Another study in 2019 on a GIS-based data mining methodology framework to analyze the influential factors of fatal traffic accidents showed that XGBoost obtained the highest modeling accuracy. [3] Fiorentini in 2020 gave outcomes from a random undersampling majority-class (RUMC) based models provide an enhancement in the reliability of the classifiers for detecting fatal crashes and those causing injury. Indeed, in imbalanced models, which showed that for the RUMC-based models, it spans from 52.5% (RUMC-based logistic regression) to 57.2% (RUMC-based k-nearest neighbor). Organizations and decision-makers could make use of RUMC and machine learning algorithms in predicting the severity of a crash occurrence, managing the present, and planning the future of their works [6].
 
-There are many factors that cause traffic accidents. Previous research showed the most often factor contributing to the accident occurrence are human factors, with driver inattention being the highest, which could be caused by several causes as e.g.distraction, overloading attention, monotonous driving, etc.[5]. However, very minimal research material have been found looking into environmental factors as causes for road accidents. One study by Jalilian et. al in 2019 [7] showed a significant relationship between fatal RTAs and factors such as; the sort of the road, the hindered visibility, the location of the accident, the accidents’ place, the climate, and lighting of the day (P<0.05). When it was cloudy, the chance was 2.60 times more than when was clear (P<0.05). But the sample size used was small, with only 2314 accidents dataset examined.
+There are many factors that cause traffic accidents. Previous research showed the most often factor contributing to the accident occurrence are human factors, with driver inattention being the highest, which could be caused by several causes as e.g.distraction, overloading attention, monotonous driving, etc.[5]. However, non-human factors have also caused accidents. One study by Jalilian et. al in 2019 [7] showed a significant relationship between fatal RTAs and factors such as; the sort of the road, the hindered visibility, the location of the accident, the accidents’ place, the climate, and lighting of the day (P<0.05). When it was cloudy, the chance was 2.60 times more than when was clear (P<0.05). But the sample size used was small, with only 2314 accidents dataset examined.
 
 ---
 
