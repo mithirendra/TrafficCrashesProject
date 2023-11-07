@@ -26,7 +26,7 @@ Many factors are responsible for causing road accidents. How to reduce the occur
 The purpose of this project is to predict road accident hotspots and analyse non-human factors causing accidents, using traffic crash data from 2011 to 2023 from the New Zealand governments open data portal (data.gov.nz). Here are research questions that the project is aiming to answer:
 
 1. What are the major accident areas and vehicle types in New Zealand?
-2. Are they any environment factors that cause more severe accidents? 
+2. Are there any environment factors that cause more severe accidents? 
 3. Can the data predict future road accidents hotspots based on past data?  
 
 ---
