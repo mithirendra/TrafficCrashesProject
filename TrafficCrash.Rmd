@@ -26,7 +26,7 @@ Many factors are responsible for causing road accidents. How to reduce the occur
 The purpose of this project is to predict road accident hotspots and analyse non-human factors causing accidents, using traffic crash data from 2011 to 2023 from the New Zealand governments open data portal (data.gov.nz). Here are research questions that the project is aiming to answer:
 
 1. What are the major accident areas and vehicle types in New Zealand?
-2. Are there any environment factors that cause more severe accidents? 
+2. Are there any non-human factors that cause more severe accidents? 
 3. Can the data predict future road accidents hotspots based on past data?  
 
 ---
@@ -75,37 +75,43 @@ str(traffic_df)
 
 ---
 
-## 6. DATA CLEANING  
+## 6. DATA CLEANING (Sundeep / Yao Hong)
   
 
 ---
 
-## 7. EXPLORATORY DATA ANALYSIS  
+## 7. EXPLORATORY DATA ANALYSIS  (Sundeep / Yao Hong)
   
 
 ---
 
-## 7. DATA METHODOLOGY  
+## 7. DATA METHODOLOGY  (Wei Ven / Ain)
   
 
 ---
 
-## 8. DATA INTERPRETATION  
+## 8. DATA INTERPRETATION  (Wei Ven / Ain)
   
 
 ---
 
-## 9. RECOMMENDATIONS AND FUTURE  
+## 9. RECOMMENDATIONS AND FUTURE  (Mithi)
   
 
 ---
 
-## 10. CONCLUSION  
+## 10. CONCLUSION  (Mithi)
   
 
 ---
 
-## 11. REFERENCES  
+## 11. OPTIONAL - DATA PRODUCT (All)
+
+
+---
+
+## 12. REFERENCES  (All)
+
 1. WHO|10 Facts on Global Road Safety. Accessed: Oct. 10, 2018. [Online].Available: http://www.who.int/features/factfiles/roadsafety/en/
 2. Santos, D., Salas, J., Quaresma, P. Machine Learning Approaches to Traffic Analysis and Hotspot Prediction. *Computers* 2021, 10(12), 157; [https://doi.org/10.3390/computers10120157](https://doi.org/10.3390/computers10120157)
 3. Mai, J., Ding, Y., Cheng, J. C. P., Tan, Y., Gan, V. J. L.,Zhang, J.C. Analyzing the Leading Causes of Traffic Fatalities
