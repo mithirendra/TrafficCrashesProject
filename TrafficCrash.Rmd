@@ -36,7 +36,7 @@ The research objectives for the project are:
 
 1. Identify major accident areas and vehicle types involved.
 2. Identify non-human variables that may cause and increase the likelihood of severe accidents, including high fatalities.
-3. Develop machine learning models to predict future road accident hotspots.  
+3. Develop machine learning models to predict future road accident severity.  
 
 ---
 
