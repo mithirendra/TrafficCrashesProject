@@ -27,7 +27,7 @@ The purpose of this project is to predict road accident hotspots and analyse non
 
 1. What are the major accident areas and vehicle types in New Zealand?
 2. Are there any non-human factors that cause more severe accidents? 
-3. Can the data predict future road accidents hotspots based on past data?  
+3. Can the data predict future severity of road accidents based on past data?  
 
 ---
 
