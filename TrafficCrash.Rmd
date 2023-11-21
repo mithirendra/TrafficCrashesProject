@@ -1,7 +1,7 @@
 ---
 title: "Road accident cause analysis and accident severity prediction with Machine Learning"
 subtitle: WQD7004 Programming for Data Science Group Project - Group 14
-author: "Mithirendra Maniam"
+author: "Mithirendra Maniam, Yao Hong, Tan Wei Ven, Nur Ain Sufi Baharozaman"
 date: "2023-11-02"
 output: html_document
 ---
@@ -77,8 +77,7 @@ summary(d1)
 
 
 ```{r}
-# Subset data to smaller subset
-# Suggest to subset the following categories:
+# Subset data to smaller subset by the following categories:
 # Year = Crash Year
 # Vehicle Types = bicycle, bus, carStationWagon, moped, motorcycle, schoolBus, suv, taxi, truck, vanOrUtility
 # Crash Location = crashLocation1, crashLocation2, region
@@ -97,32 +96,6 @@ data <- select(d1, crashYear,
 str(data)
 summary(data)
 ```
-
-```{r, echo=FALSE}
-## Handle missing values: fill in missing values instead of deleting them
-## For numeric data, use median padding
-## For categorical data, use the most common category padding
-##for(col in names(data)){
-##  if(is.numeric(data[[col]])){
-##    data[[col]][is.na(data[[col]])] <- median(data[[col]], na.rm = TRUE)
-##  } else if(is.factor(data[[col]]) || is.character(data[[col]])){
-##    levels <- unique(data[[col]][!is.na(data[[col]])])
-##    data[[col]][is.na(data[[col]])] <- levels[which.max(tabulate(match(data[[col]], levels)))]
-##  }
-##}
-
-## Handling outliers: using the box plot rule for numeric columns
-##data <- data %>%
-##  mutate(across(where(is.numeric), ~replace(.x, .x < (quantile(.x, .25, na.rm = TRUE) - 1.5 * IQR(.x, na.rm = TRUE)) | .x > (quantile(.x, .75, na.rm = TRUE) + 1.5 * IQR(.x, na.rm = TRUE)), NA)))
-
-## Can choose how to handle these outliers, e.g. replace median with
-##data <- data %>%
-##  mutate(across(where(is.numeric), ~replace(.x, is.na(.x), median(.x, na.rm = TRUE))))
-## Remove duplicate records
-##data <- distinct(data)
-
-```
-
 
 Find NAs and whether there are any outliers. Number of NA values are very small and will be deleted. Box plot shows no outliers.
 
@@ -156,11 +129,7 @@ barplot(table(data$crashYear),
         xlab = "Year",
         ylab = "Number of accidents")
 ```
-```{r}
-# Export cleaned data
-# write.csv(data, "CAS_data_cleaned.csv", row.names = FALSE)
-# data <- read.csv("CAS_data_cleaned2.csv")
-```
+
 
 ---
 
@@ -178,37 +147,6 @@ summary(data)
 
 # Missing value checks
 cat("Total number of missing values:", sum(is.na(data)), "\n")
-```
-
-
-```{r, echo=FALSE}
-# 4. Univariate Analysis - Plotting Histograms
-# Take 'areaUnitID' as an example, you can replace it with any numeric column
-#hist(data$areaUnitID, main="Histogram - areaUnitID", xlab="areaUnitID")
-
-# Univariate analysis - plotting box plots
-# Take 'areaUnitID' as an example
-#boxplot(data$areaUnitID, main="盒形图 - areaUnitID", ylab="areaUnitID")
-
-# 5. Multivariate analysis
-# Plotting a scatterplot of X and Y
-#plot(data$X, data$Y, main="散点图 - X vs Y", xlab="X", ylab="Y")
-
-# Correlation matrix (only numerical columns are considered)
-#numeric_data <- data[, sapply(data, is.numeric)]
-#cor_matrix <- cor(numeric_data, use="complete.obs")
-#print(cor_matrix)
-
-
-# 6. Subgroup analysis
-# calculating the mean of 'areaUnitID' based on the 'urban' classification
-#group_means <- tapply(data$areaUnitID, data$urban, mean)
-#print(group_means)
-
-# 7. Visualisation (using ggplot2)
-# create a bar chart based on 'crashSeverity' and 'areaUnitID'
-#ggplot(data, aes(x=crashSeverity, y=areaUnitID)) + geom_bar(stat="identity") + 
-#  ggtitle("条形图 - crashSeverity vs areaUnitID") + xlab("crashSeverity") + ylab("areaUnitID")
 ```
 
 ```{r}
