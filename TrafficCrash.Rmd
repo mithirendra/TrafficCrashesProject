@@ -71,7 +71,8 @@ library('reshape2')
 
 # retrieve large dataset
 d1 <- read.csv("Crash_Analysis_System_(CAS)_data.csv")
-
+str(d1)
+summary(d1)
 ```
 
 
@@ -154,10 +155,8 @@ barplot(table(data$crashYear),
         col = "red",
         xlab = "Year",
         ylab = "Number of accidents")
-
-# Reduce dataset to earlier years
-data <- filter(data, crashYear >= 2015 & crashYear < 2023)
-
+```
+```{r}
 # Export cleaned data
 # write.csv(data, "CAS_data_cleaned.csv", row.names = FALSE)
 # data <- read.csv("CAS_data_cleaned2.csv")
@@ -167,13 +166,17 @@ data <- filter(data, crashYear >= 2015 & crashYear < 2023)
 
 ## 7. EXPLORATORY DATA ANALYSIS  (Mithi/Yao Hong)
 ```{r}
-# 1. Overview of data
+
+# Reduce dataset to last 8 years of data (2015 to 2022)
+data <- filter(data, crashYear >= 2015 & crashYear < 2023)
+
+# Overview of data
 str(data)
 
-# 2. Summary of data
+# Summary of data
 summary(data)
 
-## 3. Missing value checks
+# Missing value checks
 cat("Total number of missing values:", sum(is.na(data)), "\n")
 ```
 
@@ -209,37 +212,13 @@ cat("Total number of missing values:", sum(is.na(data)), "\n")
 ```
 
 ```{r}
-# Showing number of accidents per year
+# Showing number of accidents per year from reduced dataset (for last 8 years)
 barplot(table(data$crashYear),
         main="Number of accidents per year from 2015 - 2022",
         ylim = c(0,50000),
         col = "red",
         xlab = "Year",
         ylab = "Number of accidents")
-```
-
-```{r}
-# Plotting graphs to show contribution of road factors to accidents
-
-f1 <- ggplot(data, aes(x = light, fill = crashSeverity)) + geom_bar(position = "stack") + theme(axis.text.x = element_text(angle = 90, size = 10)) + 
-  xlab("Type of Lighting") + ylab("Total crashes")
-
-f2 <- ggplot(data, aes(x = flatHill, fill = crashSeverity)) + geom_bar(position = "stack") + theme(axis.text.x = element_text(angle = 90, size = 10)) + 
-  xlab("Flat or Hill Road") + ylab("Total crashes")
-
-f3 <- ggplot(data, aes(x = roadLane, fill = crashSeverity)) + geom_bar(position = "stack") + theme(axis.text.x = element_text(angle = 90, size = 10))+ 
-  xlab("Number of Road Lanes") + ylab("Total crashes")
-
-f4 <- ggplot(data, aes(x = roadSurface, fill = crashSeverity)) + geom_bar(position = "stack") + theme(axis.text.x = element_text(angle = 90, size = 10)) +
-  xlab("Road Conditions") + ylab("Total crashes")
-
-f5 <- ggplot(data, aes(x = weatherA, fill = crashSeverity)) + geom_bar(position = "stack") + theme(axis.text.x = element_text(angle = 90, size = 10))+ 
-  xlab("Weather Conditions") + ylab("Total crashes")
-
-# Arranging graphs in a single plot
-library(ggpubr)
-plot <- ggarrange(f1, f2, f3, f4, f5, ncol=3, nrow=2, common.legend = TRUE, legend="bottom")
-annotate_figure(plot, top = text_grob("Number of accidents by different road condition category"))
 ```
 
 ```{r}
@@ -254,16 +233,59 @@ vehicles_melted <- vehicles_melted %>% group_by(crashYear, variable) %>%
 ggplot(vehicles_melted, aes(x = crashYear, y = total_accident, color = variable)) +
   geom_line(linetype =1,
             lwd = 1.1) + 
-  ggtitle("Number of crashes by vehicle year (2015 - 2022)") + xlab("Year)") + ylab("Total crashes")
+  ggtitle("Number of crashes by vehicle year (2015 - 2022)") + xlab("Year") + ylab("Total crashes")
 ```
 
 ```{r}
-# Showing injury type by year
+# Plotting graphs to show contribution of road factors to accidents
+
+f1 <- ggplot(data, aes(x = light, fill = crashSeverity)) + geom_bar(position = "stack") + theme(axis.text.x = element_text(angle = 90, size = 10)) + 
+  ggtitle("Number of Accidents by Road Lighting") +xlab("Road Lighting") + ylab("Total crashes")
+f1
+
+f2 <- ggplot(data, aes(x = flatHill, fill = crashSeverity)) + geom_bar(position = "stack") + theme(axis.text.x = element_text(angle = 90, size = 10)) + 
+  ggtitle("Number of Accidents by Road Inclination") + xlab("Flat / Hill Road") + ylab("Total crashes")
+f2
+
+f3 <- ggplot(data, aes(x = roadLane, fill = crashSeverity)) + geom_bar(position = "stack") + theme(axis.text.x = element_text(angle = 90, size = 10)) + 
+  ggtitle("Number of Accidents by Number of Road Lanes") +xlab("Road Lanes") + ylab("Total crashes")
+f3
+
+f4 <- ggplot(data, aes(x = roadSurface, fill = crashSeverity)) + geom_bar(position = "stack") + theme(axis.text.x = element_text(angle = 90, size = 10)) +
+  ggtitle("Number of Accidents by Road Conditions") + xlab("Road Conditions") + ylab("Total crashes")
+f4
+
+f5 <- ggplot(data, aes(x = weatherA, fill = crashSeverity)) + geom_bar(position = "stack") + theme(axis.text.x = element_text(angle = 90, size = 10))+ 
+  ggtitle("Number of Accidents by Weather Conditions") + xlab("Weather Conditions") + ylab("Total crashes")
+f5
+
+# Arranging graphs in a single plot
+library(ggpubr)
+plot <- ggarrange(f1, f2, f3, f4, f5, ncol=3, nrow=2, common.legend = TRUE, legend="bottom")
+annotate_figure(plot, top = text_grob("Number of accidents by different road condition categories"))
+```
+
+```{r}
+# Showing number of accidents by crash severity types
 barplot(table(data$crashSeverity),
         col = "blue",
         ylim = c(0,200000),
         ylab = "Number of accidents",
-        main = "Number of injury types that happened after accidents (2015 - 2022)")
+        xlab = "Crash Severity",
+        main = "Number of crashes by severity after accidents (2015 - 2022)")
+```
+
+```{r}
+# Showing number of injury by injury types
+sumdata <- select(data, fatalCount, minorInjuryCount, seriousInjuryCount)
+sumdata <- colSums(sumdata)
+barplot(sumdata,
+        col = "green",
+        ylim = c(0,90000),
+        ylab = "Number of accidents",
+        xlab = "Injury Severity",
+        main = "Number of injuries by severity after accidents (2015 - 2022)")
+
 ```
 
 ```{r, results='hide'}
