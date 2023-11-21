@@ -1,5 +1,5 @@
 ---
-title: "Road accident cause analysis and accident hotspot prediction with Machine Learning"
+title: "Road accident cause analysis and accident severity prediction with Machine Learning"
 subtitle: WQD7004 Programming for Data Science Group Project - Group 14
 author: "Mithirendra Maniam"
 date: "2023-11-02"
@@ -59,31 +59,239 @@ The Dataset URL is as follows:
 The dataset was downloaded from data.gov.nz on 30 Oct 2023. As of 30 Oct 2023, data was available from economic year 1999/2000 to 2022/2023, and has 821,744 observations.
 
 
+---
+
+## 6. DATA CLEANING (Mithi/Yao Hong)
+
 ```{r}
-# Read csv file that was downloaded
-traffic_df <- read.csv("Crash_Analysis_System_(CAS)_data.csv")
+# Load the required libraries
+library(dplyr)
+library(ggplot2)
+library('reshape2')
+
+# retrieve large dataset
+d1 <- read.csv("Crash_Analysis_System_(CAS)_data.csv")
 
 ```
 
-Display the structure of dataset.
 
 ```{r}
+# Subset data to smaller subset
+# Suggest to subset the following categories:
+# Year = Crash Year
+# Vehicle Types = bicycle, bus, carStationWagon, moped, motorcycle, schoolBus, suv, taxi, truck, vanOrUtility
+# Crash Location = crashLocation1, crashLocation2, region
+# Severity of crash = crashSeverity, fatalCount, minorInjuryCount, seriousInjuryCount
+# Accident location conditions = light, flatHill, roadLane, roadSurface, WeatherA
+# Others = Holiday, areaUnitID
+
+data <- select(d1, crashYear,  
+                   bicycle, bus, carStationWagon, moped, motorcycle, schoolBus, suv, taxi, truck, vanOrUtility, 
+                   crashLocation1, crashLocation2, region, 
+                   crashSeverity, fatalCount, minorInjuryCount, seriousInjuryCount, 
+                   light, flatHill, roadLane, roadSurface, weatherA, 
+                   holiday, areaUnitID)
+
 # Structure of dataset
-str(traffic_df)
+str(data)
+summary(data)
+```
 
+```{r, echo=FALSE}
+## Handle missing values: fill in missing values instead of deleting them
+## For numeric data, use median padding
+## For categorical data, use the most common category padding
+##for(col in names(data)){
+##  if(is.numeric(data[[col]])){
+##    data[[col]][is.na(data[[col]])] <- median(data[[col]], na.rm = TRUE)
+##  } else if(is.factor(data[[col]]) || is.character(data[[col]])){
+##    levels <- unique(data[[col]][!is.na(data[[col]])])
+##    data[[col]][is.na(data[[col]])] <- levels[which.max(tabulate(match(data[[col]], levels)))]
+##  }
+##}
+
+## Handling outliers: using the box plot rule for numeric columns
+##data <- data %>%
+##  mutate(across(where(is.numeric), ~replace(.x, .x < (quantile(.x, .25, na.rm = TRUE) - 1.5 * IQR(.x, na.rm = TRUE)) | .x > (quantile(.x, .75, na.rm = TRUE) + 1.5 * IQR(.x, na.rm = TRUE)), NA)))
+
+## Can choose how to handle these outliers, e.g. replace median with
+##data <- data %>%
+##  mutate(across(where(is.numeric), ~replace(.x, is.na(.x), median(.x, na.rm = TRUE))))
+## Remove duplicate records
+##data <- distinct(data)
+
+```
+
+
+Find NAs and whether there are any outliers. Number of NA values are very small and will be deleted. Box plot shows no outliers.
+
+```{r}
+# Remove NAs
+data <- na.omit(data)
+
+# Finding outliers for vehicle type accidents
+boxplot(data$bicycle, data$bus, data$carStationWagon, data$moped, data$motorcycle, data$schoolBus, data$suv,
+        data$taxi, data$truck, data$vanOrUtility,
+        names=c("Bicycle", "Bus", "Car", "Moped", "Motorcycle", "SchoolBus", "Suv", "Taxi", "Truck", "Van"))
+
+# Finding outliers for injury types
+boxplot(data$fatalCount, data$minorInjuryCount, data$seriousInjuryCount,
+        names=c("Fatality", "MinorInjury", "SeriousInjury"))
+
+# Replacing empty regions values with "Unknown" label
+data <- data %>% mutate(region = ifelse(region == "", 'Unknown', region))
+data <- data %>% mutate(flatHill = ifelse(flatHill == "Null", 'Unknown', flatHill))
+data <- data %>% mutate(roadLane = ifelse(roadLane == "Null", 'Unknown', roadLane))
+data <- data %>% mutate(roadSurface = ifelse(roadSurface == "Null", 'Unknown', roadSurface))
+data <- data %>% mutate(weatherA = ifelse(weatherA == "Null", 'Unknown', weatherA))
+
+# Creating a column for total_vehicles involved in accidents - sum of bicycle, bus etc.
+data <- data %>% mutate(total_vehicles = rowSums(.[2:11]))
+
+# Showcase number of accidents per year
+barplot(table(data$crashYear),
+        main="Number of accidents per year from 2000 - 2023",
+        col = "red",
+        xlab = "Year",
+        ylab = "Number of accidents")
+
+# Reduce dataset to earlier years
+data <- filter(data, crashYear >= 2015 & crashYear < 2023)
+
+# Export cleaned data
+# write.csv(data, "CAS_data_cleaned.csv", row.names = FALSE)
+# data <- read.csv("CAS_data_cleaned2.csv")
 ```
 
 ---
 
-## 6. DATA CLEANING (Sundeep / Yao Hong)
-  
+## 7. EXPLORATORY DATA ANALYSIS  (Mithi/Yao Hong)
+```{r}
+# 1. Overview of data
+str(data)
+
+# 2. Summary of data
+summary(data)
+
+## 3. Missing value checks
+cat("Total number of missing values:", sum(is.na(data)), "\n")
+```
+
+
+```{r, echo=FALSE}
+# 4. Univariate Analysis - Plotting Histograms
+# Take 'areaUnitID' as an example, you can replace it with any numeric column
+#hist(data$areaUnitID, main="Histogram - areaUnitID", xlab="areaUnitID")
+
+# Univariate analysis - plotting box plots
+# Take 'areaUnitID' as an example
+#boxplot(data$areaUnitID, main="盒形图 - areaUnitID", ylab="areaUnitID")
+
+# 5. Multivariate analysis
+# Plotting a scatterplot of X and Y
+#plot(data$X, data$Y, main="散点图 - X vs Y", xlab="X", ylab="Y")
+
+# Correlation matrix (only numerical columns are considered)
+#numeric_data <- data[, sapply(data, is.numeric)]
+#cor_matrix <- cor(numeric_data, use="complete.obs")
+#print(cor_matrix)
+
+
+# 6. Subgroup analysis
+# calculating the mean of 'areaUnitID' based on the 'urban' classification
+#group_means <- tapply(data$areaUnitID, data$urban, mean)
+#print(group_means)
+
+# 7. Visualisation (using ggplot2)
+# create a bar chart based on 'crashSeverity' and 'areaUnitID'
+#ggplot(data, aes(x=crashSeverity, y=areaUnitID)) + geom_bar(stat="identity") + 
+#  ggtitle("条形图 - crashSeverity vs areaUnitID") + xlab("crashSeverity") + ylab("areaUnitID")
+```
+
+```{r}
+# Showing number of accidents per year
+barplot(table(data$crashYear),
+        main="Number of accidents per year from 2015 - 2022",
+        ylim = c(0,50000),
+        col = "red",
+        xlab = "Year",
+        ylab = "Number of accidents")
+```
+
+```{r}
+# Plotting graphs to show contribution of road factors to accidents
+
+f1 <- ggplot(data, aes(x = light, fill = crashSeverity)) + geom_bar(position = "stack") + theme(axis.text.x = element_text(angle = 90, size = 10)) + 
+  xlab("Type of Lighting") + ylab("Total crashes")
+
+f2 <- ggplot(data, aes(x = flatHill, fill = crashSeverity)) + geom_bar(position = "stack") + theme(axis.text.x = element_text(angle = 90, size = 10)) + 
+  xlab("Flat or Hill Road") + ylab("Total crashes")
+
+f3 <- ggplot(data, aes(x = roadLane, fill = crashSeverity)) + geom_bar(position = "stack") + theme(axis.text.x = element_text(angle = 90, size = 10))+ 
+  xlab("Number of Road Lanes") + ylab("Total crashes")
+
+f4 <- ggplot(data, aes(x = roadSurface, fill = crashSeverity)) + geom_bar(position = "stack") + theme(axis.text.x = element_text(angle = 90, size = 10)) +
+  xlab("Road Conditions") + ylab("Total crashes")
+
+f5 <- ggplot(data, aes(x = weatherA, fill = crashSeverity)) + geom_bar(position = "stack") + theme(axis.text.x = element_text(angle = 90, size = 10))+ 
+  xlab("Weather Conditions") + ylab("Total crashes")
+
+# Arranging graphs in a single plot
+library(ggpubr)
+plot <- ggarrange(f1, f2, f3, f4, f5, ncol=3, nrow=2, common.legend = TRUE, legend="bottom")
+annotate_figure(plot, top = text_grob("Number of accidents by different road condition category"))
+```
+
+```{r}
+# Showing number vehicle type crashes by year
+data_vehicles <- select(data, crashYear, bicycle, bus, carStationWagon, moped, motorcycle, schoolBus,
+                        suv, taxi, truck, vanOrUtility)
+vehicles_melted <- melt(data_vehicles, id.vars="crashYear")
+vehicles_melted <- vehicles_melted %>% group_by(crashYear, variable) %>% 
+  summarise(total_accident=sum(value))
+```
+```{r}
+ggplot(vehicles_melted, aes(x = crashYear, y = total_accident, color = variable)) +
+  geom_line(linetype =1,
+            lwd = 1.1) + 
+  ggtitle("Number of crashes by vehicle year (2015 - 2022)") + xlab("Year)") + ylab("Total crashes")
+```
+
+```{r}
+# Showing injury type by year
+barplot(table(data$crashSeverity),
+        col = "blue",
+        ylim = c(0,200000),
+        ylab = "Number of accidents",
+        main = "Number of injury types that happened after accidents (2015 - 2022)")
+```
+
+```{r, results='hide'}
+# Showing number injury types by year
+data_injury <- select(data, crashYear, fatalCount, minorInjuryCount, seriousInjuryCount)
+injury_melted <- melt(data_injury, id.vars="crashYear")
+injury_melted <- injury_melted %>% group_by(crashYear, variable) %>% 
+  summarise(total_injury=sum(value))
+ggplot(injury_melted, aes(x = crashYear, y = total_injury, color = variable)) +
+  geom_line(linetype =1,
+            lwd = 1.1) + 
+  ggtitle("Number of injury types by year (2015 - 2022)") + xlab("Year)") + ylab("Total injuries")
+```
+
+```{r}
+# Shows Holiday Period with highest accidents
+ggplot(data, aes(x = holiday, fill = crashSeverity)) + geom_bar(position = "stack") + theme(axis.text.x = element_text(angle = 90, size = 10)) + 
+  ggtitle("Checking if accidents happened during festive holidays") + xlab("Festive Type") + ylab("Total accidents")
+```
+
+```{r}
+# Shows Region with highest accidents
+ggplot(data, aes(x = region, fill = crashSeverity)) + geom_bar(position = "stack") + theme(axis.text.x = element_text(angle = 90, size = 10)) + 
+  ggtitle("Number of accidents by region") + xlab("Region") + ylab("Total accidents")
+```
 
 ---
 
-## 7. EXPLORATORY DATA ANALYSIS  (Sundeep / Yao Hong)
-  
-
----
 
 ## 7. DATA METHODOLOGY  (Wei Ven / Ain)
   
