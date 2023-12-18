@@ -147,6 +147,9 @@ summary(data)
 
 # Missing value checks
 cat("Total number of missing values:", sum(is.na(data)), "\n")
+
+# Saving data into RDS for reusability
+saveRDS(data, file = "data.rds")
 ```
 
 ```{r}
@@ -254,12 +257,184 @@ ggplot(data, aes(x = region, fill = crashSeverity)) + geom_bar(position = "stack
 
 
 ## 7. DATA METHODOLOGY  (Wei Ven / Ain)
+
+### Random Forest Classification Model
+This model aims to predict leves of crash severity: Fatal, Minor, Non-Injury, Serious by using conditions of road and region as its predictors.
+```{r, message = FALSE, warning = FALSE}
+# Load necessary libraries
+library(caret)
+library(ggplot2)
+library(dplyr)
+library(randomForest)
+
+# Read data
+crash_data <- readRDS("data.rds")
+
+# Select relevant columns for prediction
+predictors <- crash_data %>%
+  select(
+    light, flatHill, roadLane, roadSurface, weatherA, region,
+    crashLocation1, crashLocation2, crashSeverity
+  )
+
+# Factorize crashSeverity for modeling
+predictors$crashSeverity <- factor(
+  predictors$crashSeverity,
+  levels = c("Fatal Crash", "Minor Crash", "Non-Injury Crash", "Serious Crash")
+)
+
+```
+
+To determine the best training and validation datasets proportion, we have generate a learning curve where the model accuracy is evaluated at different proportions of training set.
+The proportion where there is least loss between training and validation datasets accuracies is selected to run the model.
+
+```{r, message = FALSE}
+
+# Function to generate learning curves
+generate_learningCurve <- function(data) {
+  # Initialize vectors to store training and validation set sizes and their respective accuracies
+  train_sizes <- seq(0.1, 0.9, by = 0.1)
+  accuracy_results <- data.frame(
+    Training_Size = numeric(length(train_sizes)),
+    Training_Accuracy = numeric(length(train_sizes)),
+    Validation_Accuracy = numeric(length(train_sizes)),
+    stringsAsFactors = FALSE
+  )
   
+  for (i in seq_along(train_sizes)) {
+    set.seed(123)  # Set seed for reproducibility
+    trainIndex <- createDataPartition(
+      data$crashSeverity,
+      p = train_sizes[i],
+      list = FALSE,
+      times = 1
+    )
+    data_train <- data[trainIndex, ]
+    data_val <- data[-trainIndex, ]
+
+    # Train the model
+    format <- crashSeverity ~ . - crashSeverity
+    model <- randomForest(format, data = data_train, ntree = 200)
+
+    # Make predictions on both training and validation sets
+    train_predictions <- predict(model, newdata = data_train)
+    val_predictions <- predict(model, newdata = data_val)
+
+    # Calculate accuracy for both sets
+    accuracy_results[i, "Training_Size"] <- train_sizes[i] * 100
+    accuracy_results[i, "Training_Accuracy"] <- confusionMatrix(train_predictions, data_train$crashSeverity)$overall['Accuracy']
+    accuracy_results[i, "Validation_Accuracy"] <- confusionMatrix(val_predictions, data_val$crashSeverity)$overall['Accuracy']
+
+  }
+
+
+  # Find the best training size based on validation accuracy
+  best_size <- accuracy_results[which.min(abs(accuracy_results$Training_Accuracy - accuracy_results$Validation_Accuracy)), "Training_Size"]
+
+  # Plot learning curves
+  learning_curve_plot <- ggplot(accuracy_results, aes(x = Training_Size)) +
+    geom_line(aes(y = Training_Accuracy, color = "Training Accuracy")) +
+    geom_line(aes(y = Validation_Accuracy, color = "Validation Accuracy")) +
+    labs(x = "Training Set Size (%)", y = "Accuracy", color = "Curve") +
+    ggtitle("Learning Curves") +
+    theme_minimal() +
+    geom_vline(xintercept = best_size, linetype = "dashed", color = "red") +
+    annotate("text", x = best_size, y = max(accuracy_results$Validation_Accuracy),
+             label = paste("Best Size:", best_size), color = "red", vjust = -0.5)
+  
+  list(best_size = best_size, learning_curve_plot = learning_curve_plot)
+}
+
+```
+
+
+
+```{r, message = FALSE}
+# Call the function with crash_data
+learning_curve_info <- generate_learningCurve(predictors)
+# learning_curve_info
+```
+
+Finally, with the determined size, the severity of crash is predicted through random forest model with training data.
+The model's performance is evaluated by using a confusion matrix.
+```{r}
+
+set.seed(123)
+trainIndex <- createDataPartition(predictors$crashSeverity, p = (learning_curve_info$best_size / 100),
+                                  list = FALSE, times = 1)
+data_train <- predictors[trainIndex, ]
+data_test <- predictors[-trainIndex, ]
+
+# Training the Random Forest model
+format <- crashSeverity ~ . - crashSeverity
+model_rf <- randomForest(format, data = data_train, ntree = 200)
+
+# Predicting crashSeverity
+predictions <- predict(model_rf, newdata = data_test)
+
+# Model evaluation
+conf_matrix <- confusionMatrix(predictions, data_test$crashSeverity)
+
+# Output confusion matrix
+conf_matrix
+
+```
+
+
 
 ---
 
 ## 8. DATA INTERPRETATION  (Wei Ven / Ain)
-  
+
+### Evaluating Random Forest Model
+
+#### Interpreting learning curve
+- Plotting the learning curve helps in evaluating whether data is a good fit. 
+- The graph indicates that the validation datasets are reaching stability, but continues to have a persistent gap between training and validation accuracy.
+- This may suggest a possible underfitting where the model has not fully capture the complexities in the data, or feature relevance issues, where the feature of road conditions might be insufficient or irrelevant in predicting crash severity.
+
+```{r, echo = FALSE}
+# Call the function with crash_data
+learning_curve_info$learning_curve_plot
+```
+
+#### Confusion Matrix:
+
+- **Accuracy:** Overall accuracy of the model is 69.33%.
+- **Class-Specific Metrics:**
+  - Fatal Crash: 
+    - Low sensitivity (0%) but high specificity (100%) in identifying True Negatives.
+    - The model entirely misses predicting fatal crashes
+  - Minor Crash: 
+    - High specificity (99.70%) but low sensitivity (1.78%).
+    - The model struggles to identify minor crashes accurately.
+  - Non-Injury Crash: 
+    - Low specificity (2.08%) and very high sensitivity (99.97%).
+    - The model heavily biases towards predicting non-injury crashes, missing out on other types.
+  - Serious Crash: 
+    - Both specificity and sensitivity are relatively low.
+    - Similar to fatal crashes, the model entirely misses predicting serious crashes.
+
+
+#### Overall Assessment:
+- **Accuracy and Kappa:** The accuracy of 69.33% is above the No Information Rate of 68.92%, suggesting some predictive power. However, the Kappa statistic of 0.0226 indicates poor agreement between predicted and observed outcomes.
+- **Class-Specific Assessment:**
+  - The model performs well in predicting Non-Injury Crashes but struggles with Minor and Serious Crashes.
+  - For Minor Crashes, while the specificity is high, sensitivity is notably low.
+  - Serious Crashes are particularly challenging for the model, indicated by low sensitivity and specificity.
+
+#### Model Interpretation
+
+- The model exhibits poor performance in predicting "Fatal Crash," "Minor Crash," and "Serious Crash," as indicated by low sensitivity values for these classes.
+- High specificity is observed for most classes, suggesting good identification of non-occurrences of certain crash types.
+- The Positive Predictive Value is reasonably good for "Non-Injury Crash" but is NaN for "Fatal Crash," implying the model failed to make any true positive predictions for this class.
+- Overall, the model demonstrates moderate accuracy but struggles in correctly predicting certain critical classes like "Fatal Crash" and "Serious Crash." 
+- This could be due to data imbalance between levels of crash severity, which causes the model to struggle in predicting Non-Injury and Fatal crashes.
+- Further model tuning or feature engineering may be necessary to enhance predictions for these classes.
+
+
+
+
 
 ---
 
