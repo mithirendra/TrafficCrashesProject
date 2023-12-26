@@ -500,7 +500,14 @@ In terms of prediction, it can be seen that certain machine learning models can 
 
 ---
 
-## 11. REFERENCES
+## 11. RPUBS REPORT LINK
+
+The project report above has been published to RPUBs. Here is the report link on RPUBs --> https://rpubs.com/mithirendra/1133528
+
+
+---
+
+## 12. REFERENCES
 
 1. WHO|10 Facts on Global Road Safety. Accessed: Oct. 10, 2018. [Online].Available: http://www.who.int/features/factfiles/roadsafety/en/
 2. Santos, D., Salas, J., Quaresma, P. Machine Learning Approaches to Traffic Analysis and Hotspot Prediction. *Computers* 2021, 10(12), 157; [https://doi.org/10.3390/computers10120157](https://doi.org/10.3390/computers10120157)
