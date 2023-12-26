@@ -1,7 +1,7 @@
 ---
 title: "Road accident cause analysis and injury severity prediction with Machine Learning"
-subtitle: WQD7004 Programming for Data Science Group Project - Group 14
-author: "Mithirendra Maniam, Yao Hong, Tan Wei Ven, Nur Ain Sufi Baharozaman"
+subtitle: WQD7004 Programming for Data Science Group Project - RL Group 14
+author: "By Group Members - Mithirendra Maniam (MN:22076315), Yao Hong (MN:23055782), Tan Wei Ven (MN:22107624), Nur Ain Sufi Baharozaman (MN:17144963)"
 date: "2023-11-02"
 output: html_document
 ---
@@ -136,7 +136,7 @@ barplot(table(data$crashYear),
 
 ---
 
-## 7. EXPLORATORY DATA ANALYSIS & VISUALIZATIONS (Mithirendra/Yao Hong)
+## 7. EXPLORATORY DATA ANALYSIS & VISUALIZATIONS (By Mithirendra/Yao Hong)
 
 Next, an exploratory data analysis is conducted on the data to get a feel of the data and to gain more insights on the variables. Due to the sheer size of the dataset, the data has been further subset to only include observations from year 2015 onwards to year 2022.
 
