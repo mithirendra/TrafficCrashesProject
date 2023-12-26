@@ -136,7 +136,7 @@ barplot(table(data$crashYear),
 
 ---
 
-## 7. EXPLORATORY DATA ANALYSIS  (Mithirendra/Yao Hong)
+## 7. EXPLORATORY DATA ANALYSIS & VISUALIZATIONS (Mithirendra/Yao Hong)
 
 Next, an exploratory data analysis is conducted on the data to get a feel of the data and to gain more insights on the variables. Due to the sheer size of the dataset, the data has been further subset to only include observations from year 2015 onwards to year 2022.
 
@@ -283,7 +283,7 @@ In general, the Exploratory Data Analysis above has given a good understand of t
 ---
 
 
-## 7. DATA METHODOLOGY  (By Wei Ven/Ain)
+## 7. DATA MODELING & PREDICTIONS  (By Wei Ven/Ain)
 
 In the initial phase of the project, the dataset was curated to focus on relevant variables, including counts of fatal, minor, and serious injuries, as well as various factors such as the type of vehicles involved and road conditions. Categorical variables such as 'flatHill,' 'light,' 'roadLane,' and 'roadSurface' underwent one-hot encoding to transform them into a suitable format for modeling. Subsequently, the dataset was split into training and testing sets using a random seed for reproducibility. The dataset was spilt into 80% for training, and 20% for testing.
 
@@ -446,6 +446,10 @@ print(mse_results_df)
 
 ```
 
+---
+
+## 8. EVALUATION OF MODELS (By Wei Ven/Ain)
+
 This section calculates the Root Mean Square Error (RMSE) for the 3 models.
 
 ```{r}
@@ -479,7 +483,7 @@ print(rmse_df)
 
 ---
 
-## 8. DATA INTERPRETATION (By Wei Ven/Ain)
+## 9. DATA INTERPRETATION & DISCUSSION OF OUTPUT (By Wei Ven/Ain)
 
 By analyzing the Mean Absolute Error (MAE) and Mean Squared Error (MSE) results, it provides valuable insights into the performance of our models. In terms of MAE, the Linear Regression model demonstrates commendable accuracy, with predictions hovering around 0.31 for minor injuries, 0.072 for serious injuries, and 0.0104 for fatal incidents. Surpassing this baseline, the XGBoost model exhibits a marginal improvement, achieving slightly lower MAE values across all injury categories. Meanwhile, the Poisson Regression model aligns closely with the Linear Regression and XGBoost performance, showcasing MAE values in the same range, but slightly higher MAE output is seen.
 
@@ -487,7 +491,7 @@ Shifting focus to MSE, we observe that the squared errors, reflecting average sq
 
 ---
 
-## 9. CONCLUSION
+## 10. CONCLUSION
 
 In general, based on the research questions set out in the beginning of this study, the analysis above has managed to answer all 3 questions. In the EDA portion, it was found that major accident vehicle types involved were cars (Station Wagon) which contributed the highest number of accidents versus any other vehicle. The study also tried to find if non-human variables that may cause and increase the likelihood of severe accidents, including high fatalities. The study found there were no outstanding non-human variables (like road lighting, flat/hill road, number of road lanes etc.) that had been a standout to cause more accidents. Most of the accidents that happened were most likely due to human error.
 
@@ -496,7 +500,7 @@ In terms of prediction, it can be seen that certain machine learning models can 
 
 ---
 
-## 10. REFERENCES
+## 11. REFERENCES
 
 1. WHO|10 Facts on Global Road Safety. Accessed: Oct. 10, 2018. [Online].Available: http://www.who.int/features/factfiles/roadsafety/en/
 2. Santos, D., Salas, J., Quaresma, P. Machine Learning Approaches to Traffic Analysis and Hotspot Prediction. *Computers* 2021, 10(12), 157; [https://doi.org/10.3390/computers10120157](https://doi.org/10.3390/computers10120157)
