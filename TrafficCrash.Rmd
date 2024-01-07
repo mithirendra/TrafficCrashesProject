@@ -600,7 +600,7 @@ rmse_df <- data.frame(
 print(rmse_df)
 ```
 
-### 9c. EVALUATION OF CLASSIFICATION MODEL - RANDOM FOREST
+### 9c. EVALUATION OF CLASSIFICATION MODEL - CONFUSION MATRIX
 
 The Random Forest model achieves an overall accuracy of approximately 69.3%, indicating the proportion of correct predictions out of the total. 95% Confidence Interval (CI): The range where the true accuracy likely lies is between 68.9% and 69.7%. The No Information Rate (NIR) accuracy expected by always predicting the most frequent class is approximately 68.92%. 
 
