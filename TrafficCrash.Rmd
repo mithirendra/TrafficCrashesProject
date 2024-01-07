@@ -9,7 +9,7 @@ output: html_document
 
 ## 1. PROJECT INTRODUCTION
 
-```{r, echo=FALSE, out.width="50%"}
+```{r image1, echo=FALSE, out.width="50%", cache = TRUE}
 # Define variable containing url
 url <- "https://res.cloudinary.com/dmeglmbmj/image/upload/v1699100625/Traffic_Crash_d1p0rh.jpg"
 ```
@@ -47,7 +47,7 @@ There are many factors that cause traffic accidents. Previous research showed th
 
 ---
 
-## 5. DATA COLLECTION
+## 5. DATA COLLECTION & DATASET INFORMATION
 
 The dataset comes from the Waka Kotahi Crash Analysis System (CAS), which records all traffic crashes reported to data.gov.nz by the NZ Police. CAS covers crashes on all New Zealand roadways or places where the public have legal access with a motor vehicle.  
 
@@ -63,21 +63,24 @@ The dataset was downloaded from data.gov.nz on 30 Oct 2023. As of 30 Oct 2023, d
 
 ## 6. DATA CLEANING (By Mithirendra/Yao Hong)
 
-```{r}
+```{r load-data, cache=TRUE, results='hide'}
 # Load the required libraries
 library(dplyr)
 library(ggplot2)
 library('reshape2')
+```
 
+### 6a. LOAD THE DATASET
+
+```{r load-data1, cache=TRUE, results='hide'}
 # retrieve large dataset
 d1 <- read.csv("Crash_Analysis_System_(CAS)_data.csv")
 str(d1)
-summary(d1)
 ```
 
 The dataset that we read is quite large, over 500000 observations. The first step will be to select key columns that will be relevant to our data analysis.
 
-```{r}
+```{r subset-data, cache=TRUE}
 # Subset data to smaller subset by the following categories:
 # Year = Crash Year
 # Vehicle Types = bicycle, bus, carStationWagon, moped, motorcycle, schoolBus, suv, taxi, truck, vanOrUtility
@@ -98,9 +101,13 @@ str(data)
 summary(data)
 ```
 
-The next steps is to find whether they are any NAs and any outliers. Number of NA values were found to be very small and will be deleted. Box plot shows no outliers. It was also found that there are some labels that are missing. These missing labels were re-labelled as "Unknown".
+### 6b. CLEANING THE DATASET
 
-```{r}
+The next steps is to find whether they are any NAs and any outliers. From the summary above, it can be seen that number of NA values were found to be very small and will be deleted. Box plot below also shows no outliers. It was also found that there are some labels that are missing. These missing labels were re-labelled as "Unknown".
+
+### 6c. CHECKING FOR OUTLIERS AMONG VEHICLE TYPES
+
+```{r remove-NAs,cache=TRUE}
 # Remove NAs
 data <- na.omit(data)
 
@@ -108,10 +115,20 @@ data <- na.omit(data)
 boxplot(data$bicycle, data$bus, data$carStationWagon, data$moped, data$motorcycle, data$schoolBus, data$suv,
         data$taxi, data$truck, data$vanOrUtility,
         names=c("Bicycle", "Bus", "Car", "Moped", "Motorcycle", "SchoolBus", "Suv", "Taxi", "Truck", "Van"))
+```
+
+### 6d. CHECKING FOR OUTLIERS AMONG INJURY TYPES
+
+```{r remove-NAs1, cache = TRUE}
 
 # Finding outliers for injury types
 boxplot(data$fatalCount, data$minorInjuryCount, data$seriousInjuryCount,
         names=c("Fatality", "MinorInjury", "SeriousInjury"))
+```
+
+### 6e. REPLACING NAs WITH UNKNOWN
+
+```{r replace-NAs, cache=TRUE}
 
 # Replacing empty regions values with "Unknown" label
 data <- data %>% mutate(region = ifelse(region == "", 'Unknown', region))
@@ -121,7 +138,20 @@ data <- data %>% mutate(roadSurface = ifelse(roadSurface == "Null", 'Unknown', r
 data <- data %>% mutate(weatherA = ifelse(weatherA == "Null", 'Unknown', weatherA))
 data <- data %>% mutate(holiday = ifelse(holiday == "Null", 'Unknown', holiday))
 
+```
 
+
+---
+
+## 7. EXPLORATORY DATA ANALYSIS & VISUALIZATIONS (By Mithirendra/Yao Hong)
+
+Next, an exploratory data analysis is conducted on the data to get a feel of the data and to gain more insights on the variables. 
+
+### 7a. SHOWCASING OVERALL NUMBER OF ACCIDENTS IN DATASET
+
+First, we try to understand the number of accidents in the whole dataset.
+
+```{r number-of-accidents, cache=TRUE, echo=FALSE}
 # Creating a column for total_vehicles involved in accidents - sum of bicycle, bus etc.
 data <- data %>% mutate(total_vehicles = rowSums(.[2:11]))
 
@@ -133,32 +163,37 @@ barplot(table(data$crashYear),
         ylab = "Number of accidents")
 ```
 
+### 7b. SUBSETTING THE DATASET
+Due to the sheer size of the database, the data is subsetted into the last 8 years of data to perform analysis. The new dataset consists of 278,823 observations and 26 variables.
 
----
-
-## 7. EXPLORATORY DATA ANALYSIS & VISUALIZATIONS (By Mithirendra/Yao Hong)
-
-Next, an exploratory data analysis is conducted on the data to get a feel of the data and to gain more insights on the variables. Due to the sheer size of the dataset, the data has been further subset to only include observations from year 2015 onwards to year 2022.
-
-```{r}
+```{r eda-reduce-data, cache=TRUE, echo=FALSE}
 
 # Reduce dataset to last 8 years of data (2015 to 2022)
 data <- filter(data, crashYear >= 2015 & crashYear < 2023)
 
 # Overview of data
 str(data)
+```
 
+```{r eda-reduce-data1, cache=TRUE, results='hide'}
 # Summary of data
 summary(data)
+```
+
+### 7c. CHECKING FOR NAs AFTER CLEANING & SUBSET
+There are no more NAs in the database because it has been cleaned, as shown below.
+
+```{r eda-missing-data, cache=TRUE}
 
 # Missing value checks
 cat("Total number of missing values:", sum(is.na(data)), "\n")
 
 ```
 
+### 7d. NUMBER OF ACCIDENTS IN THE LAST 8 YEARS
 The following is plotted to showcase the number of accidents that have happened from year 2015 to year 2022. The plot shows that number of accidents remains above 30,000 cases every year except for the year 2022.
 
-```{r}
+```{r eda1, cache=TRUE}
 # Showing number of accidents per year from reduced dataset (for last 8 years)
 barplot(table(data$crashYear),
         main="Number of accidents per year from 2015 - 2022",
@@ -168,9 +203,12 @@ barplot(table(data$crashYear),
         ylab = "Number of accidents")
 ```
 
+
+### 7e. ANSWERING RESEARCH QUESTION 1 - IDENTIFYING VEHICLES TYPES INVOLVED IN ACCIDENTS
+
 The following line chart is plotted to understand which vehicle causes the most accidents. It can be seen that sedan vehicles (car/station wagons) cause the highest number of accidents versus any other vehicle types in New Zeland.
 
-```{r}
+```{r eda2, cache=TRUE, echo=FALSE, eval=FALSE}
 # Showing number vehicle type crashes by year
 data_vehicles <- select(data, crashYear, bicycle, bus, carStationWagon, moped, motorcycle, schoolBus,
                         suv, taxi, truck, vanOrUtility)
@@ -178,21 +216,26 @@ vehicles_melted <- melt(data_vehicles, id.vars="crashYear")
 vehicles_melted <- vehicles_melted %>% group_by(crashYear, variable) %>% 
   summarise(total_accident=sum(value))
 ```
-```{r}
+
+```{r eda3, cache=TRUE}
 ggplot(vehicles_melted, aes(x = crashYear, y = total_accident, color = variable)) +
   geom_line(linetype =1,
             lwd = 1.1) + 
   ggtitle("Number of crashes by vehicle year (2015 - 2022)") + xlab("Year") + ylab("Total crashes")
 ```
 
-The following analysis is to understand if accidents are causes by any non human variables. 
-* Road lighting - accidents seem to happen during bright sunny days, dark days and even overcast days. There isn't any particular road lighting that stands out.
-* Flat vs Hill roads - a high number of accidents happened on flat roads.
-* Number of Road lanes - most of the accidents happened on 2-way roads.
-* Road conditions - most accidents happened on sealed roads.
-* Weather conditions - most of the accidents happened when the weather was fine.
+### 7f. ANSWERING RESEARCH QUESTION 2 - IDENTIFYING VEHICLES TYPES INVOLVED IN ACCIDENTS
 
-```{r}
+The following analysis is to understand if accidents are causes by any non human variables. The non human variables analysed are:
+* Road lighting  
+* Flat vs Hill roads  
+* Number of Road lanes  
+* Road conditions  
+* Weather conditions  
+
+Different graphs were plotted to understand the different variables.
+
+```{r eda4, cache=TRUE, echo=FALSE}
 # Plotting graphs to show contribution of road factors to accidents
 
 f1 <- ggplot(data, aes(x = light, fill = crashSeverity)) + geom_bar(position = "stack") + theme(axis.text.x = element_text(angle = 90, size = 10)) + 
@@ -221,9 +264,20 @@ plot <- ggarrange(f1, f2, f3, f4, f5, ncol=3, nrow=2, common.legend = TRUE, lege
 annotate_figure(plot, top = text_grob("Number of accidents by different road condition categories"))
 ```
 
+Here is the summary of findings.
+* Road lighting - accidents seem to happen during bright sunny days, dark days and even overcast days. There isn't any particular road lighting that stands out.
+* Flat vs Hill roads - a high number of accidents happened on flat roads.
+* Number of Road lanes - most of the accidents happened on 2-way roads.
+* Road conditions - most accidents happened on sealed roads.
+* Weather conditions - most of the accidents happened when the weather was fine.
+
+In summary, it can be seen that none of the non-human variables standout in causing any accidents.
+
+
+### 7g. EXPLORING CRASH SEVERITY
 In terms of crash severity, it can be seen that most of the accidents were non-injury crashes. The number of minor crashes and serious crashes were much smaller.
 
-```{r}
+```{r eda5, cache=TRUE}
 # Showing number of accidents by crash severity types
 barplot(table(data$crashSeverity),
         col = "blue",
@@ -233,9 +287,10 @@ barplot(table(data$crashSeverity),
         main = "Number of crashes by severity after accidents (2015 - 2022)")
 ```
 
+### 7h. EXPLORING INJURY SEVERITY
 In terms of injurity severity, it can be seen that most of the accidents had minor injuries, with more than 80,000 accidents. The number of serious injuries and fatality accidents were much smaller. However, in terms of relative numbers, the number of serious injury accidents was still high, which was close 20,000 accidents.
 
-```{r}
+```{r eda6, cache=TRUE}
 # Showing number of injury by injury types
 sumdata <- select(data, fatalCount, minorInjuryCount, seriousInjuryCount)
 sumdata <- colSums(sumdata)
@@ -248,31 +303,38 @@ barplot(sumdata,
 
 ```
 
+### 7i. INJURY TYPES TREND
 By year, it can be seen that most accident injuries happened in year 2018 and 2019. The Covid-19 pandemic in year 2020 and 2021 reduced the number of accident injuries. However the number has been on an increasing trend in year 2022.
 
-```{r, results='hide'}
+```{r, eda7, cache=TRUE, echo=FALSE}
 # Showing number injury types by year
 data_injury <- select(data, crashYear, fatalCount, minorInjuryCount, seriousInjuryCount)
 injury_melted <- melt(data_injury, id.vars="crashYear")
 injury_melted <- injury_melted %>% group_by(crashYear, variable) %>% 
   summarise(total_injury=sum(value))
+```
+
+```{r eda7a, cache=TRUE}
 ggplot(injury_melted, aes(x = crashYear, y = total_injury, color = variable)) +
   geom_line(linetype =1,
             lwd = 1.1) + 
   ggtitle("Number of injury types by year (2015 - 2022)") + xlab("Year)") + ylab("Total injuries")
 ```
 
+
+### 7j. CHECKING IF FESTIVE CELEBRATIONS CAUSE HIGHER ACCIDENTS
 We wanted to also understand if festive celebrations had caused higher number of accidents. The graph below shows that festive holidays do not contribute to higher number of accidents.
 
-```{r}
+```{r eda8, cache=TRUE}
 # Shows Holiday Period with highest accidents
 ggplot(data, aes(x = holiday, fill = crashSeverity)) + geom_bar(position = "stack") + theme(axis.text.x = element_text(angle = 90, size = 10)) + 
   ggtitle("Checking if accidents happened during festive holidays") + xlab("Festive Type") + ylab("Total accidents")
 ```
 
+### 7k. CHECKING IF CERTAIN REGIONS HAVE HIGHER ACCIDENTS
 The graph below shows that higher number of accidents happened in the big city regions, namely Auckland, Wellington and Waikato regions.
 
-```{r}
+```{r eda9, cache=TRUE}
 # Shows Region with highest accidents
 ggplot(data, aes(x = region, fill = crashSeverity)) + geom_bar(position = "stack") + theme(axis.text.x = element_text(angle = 90, size = 10)) + 
   ggtitle("Number of accidents by region") + xlab("Region") + ylab("Total accidents")
@@ -283,13 +345,13 @@ In general, the Exploratory Data Analysis above has given a good understand of t
 ---
 
 
-## 7. DATA MODELING & PREDICTIONS  (By Wei Ven/Ain)
+## 8. DATA MODELING & PREDICTIONS  (By Wei Ven/Ain)
 
 In the initial phase of the project, the dataset was curated to focus on relevant variables, including counts of fatal, minor, and serious injuries, as well as various factors such as the type of vehicles involved and road conditions. Categorical variables such as 'flatHill,' 'light,' 'roadLane,' and 'roadSurface' underwent one-hot encoding to transform them into a suitable format for modeling. Subsequently, the dataset was split into training and testing sets using a random seed for reproducibility. The dataset was spilt into 80% for training, and 20% for testing.
 
 The first step will be to load the necessary libraries to perform the modeling.
 
-```{r}
+```{r model-intro, cache=TRUE, eval=FALSE}
 
 
 
@@ -305,7 +367,7 @@ library(xgboost)
 
 Then, the step of subsetting the data and preparing for modeling will be done, by spliting data into training and test sets.
 
-```{r}
+```{r model-subset, cache=TRUE}
 #Subset data
 data_reg <- select(data, fatalCount, minorInjuryCount, seriousInjuryCount,bicycle, bus, moped, motorcycle, schoolBus, suv, taxi, truck, vanOrUtility, flatHill, light, roadLane, roadSurface)
 
@@ -322,11 +384,13 @@ train_data_reg <- data_reg[trainIndex, ]
 test_data_reg <- data_reg[-trainIndex, ]
 ```
 
-3 different models were explored by our team to understand the peformance of each model. The best model will be chosen the models that were explored.
+4 different models were explored by our team to understand the peformance of each model. The best model will be chosen the models that were explored. 3 models for Regression and 1 model for Classification.
+
+### 8a. MODEL 1 - REGRESSION - LINEAR REGRESSION MODEL
 
 The first model employed in this project is a Linear Regression Model, specifically tailored for predicting 'fatalCount,' 'minorCount,' and 'seriousCount.' This regression task involves predicting numerical outcomes for each injury category. The choice of linear regression serves as a foundational baseline for comparison with more complex models. Predictions were generated on the test set, and for practical application, these predictions were rounded to whole numbers. The rationale behind using a linear regression model lies in its interpretability and simplicity, making it an appropriate starting point for understanding the basic relationships within the data in the context of a regression task.
 
-```{r}
+```{r model-1, cache=TRUE}
 # MODEL 1: Linear Regression Model
 
 # Train Linear Regression Model for fatalCount
@@ -354,9 +418,11 @@ mse_serious_lm<- mean((test_data_reg$seriousInjuryCount - rounded_predictions_se
 
 ```
 
+### 8b. MODEL 2 - REGRESSION - XGBOOST MODEL
+
 The second model employed is a XGBoost model.Introducing the XGBoost model marks a significant step in predicting our intended outcomes. XGBoost is known for handling complex patterns effectively. It was trained on a specific set of features, excluding the target variable and other injury counts, to adapt well to our dataset while keeping attention on our overall goal. The training process used boosting rounds, allowing the model to improve predictions iteratively. XGBoost naturally deals with complex patterns and interactions among variables, making it more advanced than linear regression. The chosen features cover various aspects of the data, helping the model identify subtle relationships and patterns.
 
-```{r}
+```{r model-2, cache=TRUE}
 # MODEL 2: XGBoost Regression:
 
 # Train XGBoost Model for fatalCount
@@ -387,9 +453,11 @@ mae_serious_xgb <- mean(abs(test_data_reg$seriousInjuryCount - rounded_predictio
 mse_serious_xgb <- mean((test_data_reg$seriousInjuryCount - rounded_predictions_xgb_serious)^2)
 ```
 
+### 8c. MODEL 3 - REGRESSION - POISSON REGRESSION MODEL
+
 The third model is a Poisson Regression Model. This model capitalizes on the Poisson distribution's strength in handling count data.  Specialized for count data, the Poisson regression offers a detailed perspective on how our selected features interact with the expected counts of road incidents. It goes beyond prediction, revealing the underlying dynamics that contribute to the frequency of fatal incidents based on distinct features. As we examine the model's summary, key insights emerge from coefficients and their significance. These provide a clear understanding of how each feature influences the expected counts of fatal incidents.
 
-```{r}
+```{r model-3, cache=TRUE}
 # MODEL 3: Fit Poisson Regression Model for fatalCount
 
 poisson_model_fatal <- glm(fatalCount ~ ., data = train_data_reg, family = "poisson")
@@ -415,7 +483,60 @@ mse_minor_poisson <- mean((test_data_reg$minorInjuryCount - rounded_predictions_
 poisson_model_serious <- glm(seriousInjuryCount ~ ., data = train_data_reg, family = "poisson")
 predictions_poisson_serious <- predict(poisson_model_serious, newdata = test_data_reg, type = "response")
 rounded_predictions_poisson_serious <- round(predictions_poisson_serious)
+```
 
+### 8d. MODEL 4 - CLASSIFICATION - RANDOM FOREST MODEL
+
+The fourth model is using the classification random forest model on a factorized variable. Training and test sets are created and a prediction on Crash Severity is done at the end.
+
+```{r model-4, cache=TRUE}
+
+library(randomForest)
+
+# Select relevant columns for prediction
+  predictors <- data %>%
+    select(
+      light, flatHill, roadLane, roadSurface, weatherA, region,
+      crashLocation1, crashLocation2, crashSeverity
+    )
+
+  # Factorize crashSeverity for modeling
+  predictors$crashSeverity <- factor(
+    predictors$crashSeverity,
+    levels = c("Fatal Crash", "Minor Crash", "Non-Injury Crash", "Serious Crash")
+  )
+
+buildmodel<-function(format, data){
+  randomForest(format, data, ntree = 200)
+}
+  
+# Creating training and testing sets
+set.seed(123)
+trainIndex <- createDataPartition(predictors$crashSeverity, p = 0.8, 
+                                list = FALSE, times = 1)
+data_train <- predictors[trainIndex, ]
+data_test <- predictors[-trainIndex, ]
+
+# Training the Random Forest model
+format <- crashSeverity ~ . - crashSeverity
+model_rf <- buildmodel(format,data_train)
+
+# Predicting crashSeverity
+predictions <- predict(model_rf, newdata = data_test)
+
+```
+
+---
+
+## 9. EVALUATION OF MODELS (By Wei Ven/Ain)
+
+This section calculates the Mean Absolute Error (MAE), Mean Squared Error (MSE) and Root Mean Square Error (RMSE) for the 3 models.
+
+### 9a. EVALUATION OF REGRESSION MODEL - CALCULATE MAE AND MSE
+
+In this section, the MAE and MSE for the 3 Regression models - Linear Regression, XGBoost and Poisson Regression are calculated. The different values obtained from the 3 models are compared for interpretation.
+
+```{r model-eval1, cache=TRUE}
 # Calculate MAE and MSE for seriousInjuryCount
 mae_serious_poisson <- mean(abs(test_data_reg$seriousInjuryCount - rounded_predictions_poisson_serious))
 mse_serious_poisson <- mean((test_data_reg$seriousInjuryCount - rounded_predictions_poisson_serious)^2)
@@ -446,13 +567,11 @@ print(mse_results_df)
 
 ```
 
----
+### 9b. EVALUATION OF REGRESSION MODEL - CALCULATE RMSE
 
-## 8. EVALUATION OF MODELS (By Wei Ven/Ain)
+In this section, the RMSE for the 3 Regression models - Linear Regression, XGBoost and Poisson Regression are calculated. A data frame is then created for the different values obtain from the 3 models to compare values.
 
-This section calculates the Root Mean Square Error (RMSE) for the 3 models.
-
-```{r}
+```{r model-eval2, cache=TRUE}
 
 # Calculate RMSE for Linear Regression
 rmse_fatal_lm <- sqrt(mean((test_data_reg$fatalCount - rounded_predictions_fatal)^2))
@@ -481,17 +600,41 @@ rmse_df <- data.frame(
 print(rmse_df)
 ```
 
+### 9c. EVALUATION OF CLASSIFICATION MODEL - RANDOM FOREST
+
+The Random Forest model achieves an overall accuracy of approximately 69.3%, indicating the proportion of correct predictions out of the total. 95% Confidence Interval (CI): The range where the true accuracy likely lies is between 68.9% and 69.7%. The No Information Rate (NIR) accuracy expected by always predicting the most frequent class is approximately 68.92%. 
+
+```{r model-eval3, cache = TRUE}
+
+# Random Forest Model evaluation
+conf_matrix <- confusionMatrix(predictions, data_test$crashSeverity)
+
+#output confusion matrix
+conf_matrix
+
+```
+
+
 ---
 
-## 9. DATA INTERPRETATION & DISCUSSION OF OUTPUT (By Wei Ven/Ain)
+## 10. DATA INTERPRETATION & DISCUSSION OF OUTPUT (By Wei Ven/Ain)
 
+### ANSWERING RESEARCH QUESTION 3 - PREDICTION MODELS  
+
+### 10a. FOR REGRESSION MODELS
 By analyzing the Mean Absolute Error (MAE) and Mean Squared Error (MSE) results, it provides valuable insights into the performance of our models. In terms of MAE, the Linear Regression model demonstrates commendable accuracy, with predictions hovering around 0.31 for minor injuries, 0.072 for serious injuries, and 0.0104 for fatal incidents. Surpassing this baseline, the XGBoost model exhibits a marginal improvement, achieving slightly lower MAE values across all injury categories. Meanwhile, the Poisson Regression model aligns closely with the Linear Regression and XGBoost performance, showcasing MAE values in the same range, but slightly higher MAE output is seen.
 
-Shifting focus to MSE, we observe that the squared errors, reflecting average squared differences between predicted and actual values, are larger than their absolute counterparts. In this context, the XGBoost model excels with slightly lower MSE values compared to Linear Regression, signifying its enhanced performance. On the other hand, the Poisson Regression model, while comparable to Linear Regression, reveals a relatively higher MSE for FatalCount, suggesting potential areas for improvement. The Root Mean Squared Error (RMSE) results further illuminate the precision of our models. Looking at the RMSE values, XGBoost consistently outperforms both Linear Regression and Poisson Regression across all injury categories. The RMSE for fatal incidents in XGBoost is lower, indicating a superior ability to minimize errors in predicting the counts of fatal injuries. In summary, the combined analysis of MAE, MSE, and RMSE highlights the strengths of each model, with XGBoost standing out for its higher predictive precision and resilience across different types of injury in a traffic accident.  
+Shifting focus to MSE, we observe that the squared errors, reflecting average squared differences between predicted and actual values, are larger than their absolute counterparts. In this context, the XGBoost model excels with slightly lower MSE values compared to Linear Regression, signifying its enhanced performance. On the other hand, the Poisson Regression model, while comparable to Linear Regression, reveals a relatively higher MSE for FatalCount, suggesting potential areas for improvement. 
+
+The Root Mean Squared Error (RMSE) results further illuminate the precision of our models. Looking at the RMSE values, XGBoost consistently outperforms both Linear Regression and Poisson Regression across all injury categories. The RMSE for fatal incidents in XGBoost is lower, indicating a superior ability to minimize errors in predicting the counts of fatal injuries. In summary, the combined analysis of MAE, MSE, and RMSE highlights the strengths of each model, with XGBoost standing out for its higher predictive precision and resilience across different types of injury in a traffic accident.  
+
+### 10b. FOR CLASSIFICATION MODEL
+The model exhibits poor performance in predicting “Fatal Crash,” “Minor Crash,” and “Serious Crash,” as indicated by low sensitivity values for these classes. High specificity is observed for most classes, suggesting good identification of non-occurrences of certain crash types.
+The Positive Predictive Value is reasonably good for “Non-Injury Crash” but is NaN for “Fatal Crash,” implying the model failed to make any true positive predictions for this class. Overall, the model demonstrates moderate accuracy but struggles in correctly predicting certain critical classes like “Fatal Crash” and “Serious Crash.” Further model tuning or feature engineering may be necessary to enhance predictions for these classes.
 
 ---
 
-## 10. CONCLUSION
+## 11. CONCLUSION
 
 In general, based on the research questions set out in the beginning of this study, the analysis above has managed to answer all 3 questions. In the EDA portion, it was found that major accident vehicle types involved were cars (Station Wagon) which contributed the highest number of accidents versus any other vehicle. The study also tried to find if non-human variables that may cause and increase the likelihood of severe accidents, including high fatalities. The study found there were no outstanding non-human variables (like road lighting, flat/hill road, number of road lanes etc.) that had been a standout to cause more accidents. Most of the accidents that happened were most likely due to human error.
 
@@ -500,14 +643,14 @@ In terms of prediction, it can be seen that certain machine learning models can 
 
 ---
 
-## 11. RPUBS REPORT LINK
+## 12. RPUBS REPORT LINK
 
 The project report above has been published to RPUBs. Here is the report link on RPUBs --> https://rpubs.com/mithirendra/1133528
 
 
 ---
 
-## 12. REFERENCES
+## 13. REFERENCES
 
 1. WHO|10 Facts on Global Road Safety. Accessed: Oct. 10, 2018. [Online].Available: http://www.who.int/features/factfiles/roadsafety/en/
 2. Santos, D., Salas, J., Quaresma, P. Machine Learning Approaches to Traffic Analysis and Hotspot Prediction. *Computers* 2021, 10(12), 157; [https://doi.org/10.3390/computers10120157](https://doi.org/10.3390/computers10120157)
@@ -517,7 +660,13 @@ Using XGBoost and Grid-Based Analysis: A City Management Perspective. *IEEE Acce
 5. Bucsuházya, K., Matuchováa, E., Zůvalaa, R., Moravcováa, P., Kostíkováa, M., Mikuleca, R. Human factors contributing to the road traffic accident occurrence. AIIT 2nd International Congress on Transport Infrastructure and Systems in a changing world
 (TIS ROMA 2019), 23rd-24th September 2019, Rome, Italy.
 6. Fiorentini, N., Losa, M. Handling Imbalanced Data in Road Crash Severity Prediction by Machine Learning Algorithms. *Infrastructures* 2020, 5(7), 61; [https://doi.org/10.3390/infrastructures507006](https://doi.org/10.3390/infrastructures507006)
-7. Jalilian, M.M, Safarpour, H., Bazyar, J., Keykaleh, M.S., Malekyan, L., Khorshidi, A. Environmental Related Risk Factors to Road Traffic Accidents in Ilam, Iran. *Med Arch.* 2019 Jun; 73(3): 169–172.
+7. Jalilian, M.M, Safarpour, H., Bazyar, J., Keykaleh, M.S., Malekyan, L., Khorshidi, A. Environmental Related Risk Factors to Road Traffic Accidents in Ilam, Iran. *Med Arch.* 2019 Jun; 73(3): 169–172.  
+  
+  
+```{r image2, echo=FALSE, out.width="50%", cache = TRUE}
+# Define variable containing url
+url <- "https://res.cloudinary.com/dmeglmbmj/image/upload/v1704600076/thank-you_pdhhea.jpg"
+```
 
-
+<center><img src="`r url`" width="500" /></center>  
 
