@@ -136,7 +136,7 @@ data <- data %>% mutate(flatHill = ifelse(flatHill == "Null", 'Unknown', flatHil
 data <- data %>% mutate(roadLane = ifelse(roadLane == "Null", 'Unknown', roadLane))
 data <- data %>% mutate(roadSurface = ifelse(roadSurface == "Null", 'Unknown', roadSurface))
 data <- data %>% mutate(weatherA = ifelse(weatherA == "Null", 'Unknown', weatherA))
-data <- data %>% mutate(holiday = ifelse(holiday == "Null", 'Unknown', holiday))
+data <- data %>% mutate(holiday = ifelse(holiday == "", 'Unknown', holiday))
 
 ```
 
@@ -224,7 +224,7 @@ ggplot(vehicles_melted, aes(x = crashYear, y = total_accident, color = variable)
   ggtitle("Number of crashes by vehicle year (2015 - 2022)") + xlab("Year") + ylab("Total crashes")
 ```
 
-### 7f. ANSWERING RESEARCH QUESTION 2 - IDENTIFYING VEHICLES TYPES INVOLVED IN ACCIDENTS
+### 7f. ANSWERING RESEARCH QUESTION 2 - IDENTIFYING NON HUMAN VARIABLES THAT COULD CAUSE ACCIDENTS
 
 The following analysis is to understand if accidents are causes by any non human variables. The non human variables analysed are:
 * Road lighting  
