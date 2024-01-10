@@ -264,14 +264,14 @@ plot <- ggarrange(f1, f2, f3, f4, f5, ncol=3, nrow=2, common.legend = TRUE, lege
 annotate_figure(plot, top = text_grob("Number of accidents by different road condition categories"))
 ```
 
-Here is the summary of findings.
-* Road lighting - accidents seem to happen during bright sunny days, dark days and even overcast days. There isn't any particular road lighting that stands out.
-* Flat vs Hill roads - a high number of accidents happened on flat roads.
-* Number of Road lanes - most of the accidents happened on 2-way roads.
-* Road conditions - most accidents happened on sealed roads.
-* Weather conditions - most of the accidents happened when the weather was fine.
+Here is the summary of findings.  
+* Road lighting - accidents seem to happen during bright sunny days, dark days and even overcast days. There isn't any particular road lighting that stands out.  
+* Flat vs Hill roads - a high number of accidents happened on flat roads.  
+* Number of Road lanes - most of the accidents happened on 2-way roads.  
+* Road conditions - most accidents happened on sealed roads.  
+* Weather conditions - most of the accidents happened when the weather was fine.  
 
-In summary, it can be seen that none of the non-human variables standout in causing any accidents.
+In summary, it can be seen that none of the non-human variables standout in causing any accidents, except maybe flat roads and 2 ways roads which had high accident rates. The accidents on these flat and 2 way lane roads may have been caused by human errors such as speeding or losing control of the vehicle, since flat and 2 way lane roads could be prone to drivers speeding.
 
 
 ### 7g. EXPLORING CRASH SEVERITY
@@ -636,7 +636,7 @@ The Positive Predictive Value is reasonably good for “Non-Injury Crash” but 
 
 ## 11. CONCLUSION
 
-In general, based on the research questions set out in the beginning of this study, the analysis above has managed to answer all 3 questions. In the EDA portion, it was found that major accident vehicle types involved were cars (Station Wagon) which contributed the highest number of accidents versus any other vehicle. The study also tried to find if non-human variables that may cause and increase the likelihood of severe accidents, including high fatalities. The study found there were no outstanding non-human variables (like road lighting, flat/hill road, number of road lanes etc.) that had been a standout to cause more accidents. Most of the accidents that happened were most likely due to human error.
+In general, based on the research questions set out in the beginning of this study, the analysis above has managed to answer all 3 questions. In the EDA portion, it was found that major accident vehicle types involved were cars (Station Wagon) which contributed the highest number of accidents versus any other vehicle. The study also tried to find if non-human variables that may cause and increase the likelihood of severe accidents, including high fatalities. The study found there were no outstanding non-human variables (like road lighting, flat/hill road, number of road lanes etc.) that had been a standout to cause more accidents, except flat roads and 2 ways roads. Most of the accidents that happened were most likely due to human error that happened on these flat and 2 way roads.
 
 In terms of prediction, it can be seen that certain machine learning models can be used to predict traffic crashes. Our analysis shows that the XGBoost has higher predictive precision and resilience across different types of injury in a traffic accident. The model predicts minor accidents at a higher accuracy versus fatality and serious accidents. Further studies can be explored to understand if there are additional models that could be used for prediction.
 
