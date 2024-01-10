@@ -9,7 +9,7 @@ output: html_document
 
 ## 1. PROJECT INTRODUCTION
 
-```{r image1, echo=FALSE, out.width="50%", cache = TRUE}
+```{r image1, echo=FALSE, out.width="50%", cache=TRUE}
 # Define variable containing url
 url <- "https://res.cloudinary.com/dmeglmbmj/image/upload/v1699100625/Traffic_Crash_d1p0rh.jpg"
 ```
@@ -107,7 +107,7 @@ The next steps is to find whether they are any NAs and any outliers. From the su
 
 ### 6c. CHECKING FOR OUTLIERS AMONG VEHICLE TYPES
 
-```{r remove-NAs,cache=TRUE}
+```{r remove-NAs, cache=TRUE}
 # Remove NAs
 data <- na.omit(data)
 
@@ -119,7 +119,7 @@ boxplot(data$bicycle, data$bus, data$carStationWagon, data$moped, data$motorcycl
 
 ### 6d. CHECKING FOR OUTLIERS AMONG INJURY TYPES
 
-```{r remove-NAs1, cache = TRUE}
+```{r remove-NAs1, cache=TRUE}
 
 # Finding outliers for injury types
 boxplot(data$fatalCount, data$minorInjuryCount, data$seriousInjuryCount,
